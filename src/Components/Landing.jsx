@@ -72,7 +72,7 @@ export default function Landing() {
     if (currentUser !== null && currentUser !== undefined) {
       navigate("/dashboard", { replace: true });
     }
-  }, [currentUser]);
+  }, [currentUser, navigate]);
 
   return (
     <>

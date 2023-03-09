@@ -20,7 +20,7 @@ import Home from "./Home";
 import Reports from "./Reports";
 import Help from "./Help";
 import Settings from "./Settings";
-import { getCurrentUser, signInMicrosoft, signOutMicrosoft } from "../firebase";
+import { getCurrentUser } from "../firebase";
 
 const drawerWidth = "12em";
 
@@ -37,10 +37,8 @@ export default function Dashboard() {
   ];
   
   useEffect(() => {
-    if (user == null || user == undefined) {
-      navigate("/", { replace: true });
-    }
-  }, []);
+    user ? navigate("/dashboard") : navigate("/", { replace: true });
+  }, [user, navigate]);
 
   return (
     <>
