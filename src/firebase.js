@@ -3,7 +3,6 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, signOut, OAuthProvider } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 import { getFirestore } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -21,7 +20,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 const db = getFirestore(app);
-var userDetails = {};
 
 const provider = new OAuthProvider('microsoft.com');
 provider.setCustomParameters({
@@ -31,16 +29,9 @@ provider.setCustomParameters({
 function signInMicrosoft() {
     signInWithPopup(auth, provider)
         .then((result) => {
-            // User is signed in.
-            // IdP data available in result.additionalUserInfo.profile.
-
-            // Get the OAuth access token and ID Token
-            const credential = OAuthProvider.credentialFromResult(result);
-            const accessToken = credential.accessToken;
-            const idToken = credential.idToken;
-            const displayName = result.user.displayName;
-            const email = result.user.email;
-            userDetails = { name: displayName, email: email };
+            // const credential = OAuthProvider.credentialFromResult(result);
+            // const accessToken = credential.accessToken;
+            // const idToken = credential.idToken;
             return result;
         })
         .catch((error) => {
@@ -59,11 +50,6 @@ function signOutMicrosoft() {
 
 function getCurrentUser() {
     return auth.currentUser;
-}
-
-function getUserDetails() {
-    console.log(userDetails);
-    return userDetails;
 }
 
 //define literally every firebase function here, then type export then include every firebase function you need to export

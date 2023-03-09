@@ -7,15 +7,12 @@ import {
   Container,
   Paper,
   Stack,
-  Select,
-  InputLabel,
-  FormControl,
-  MenuItem,
   Divider,
 } from "@mui/material";
 
 export default function Settings() {
-  const [server, setServer] = React.useState(false);
+  const [server, setServer] = useState(false);
+  
   const handleChange = (event) => {
     setServer(event.target.value);
   };
