@@ -13,7 +13,47 @@ import {
   MenuItem,
   Divider,
   Button,
+  styled,
+  Table,
+  TableBody,
+  TableCell,
+  tableCellClasses,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from "@mui/material";
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: "#212f92",
+    color: "#fff",
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));
+
+function createData(date, time, temperature, status) {
+  return { date, time, temperature, status };
+}
+
+const rows = [
+  createData("09/03/2023","22:30PM", 25, "Normal"),
+  createData("09/03/2023","22:40PM", 25, "Normal"),
+  createData("09/03/2023","22:50PM", 27, "High"),
+  createData("09/03/2023","23:00PM", 32, "High"),
+  createData("09/03/2023","23:10PM", 35, "High"),
+];
 
 export default function Reports() {
   const [server, setServer] = useState(false);
@@ -30,46 +70,66 @@ export default function Reports() {
           spacing={5}
           sx={{ justifyContent: "space-between" }}
         >
+          <Typography sx={{ alignSelf: "center" }} noWrap={true} variant="h4">
+            Reports
+          </Typography>
           <Box>
-            <Typography noWrap={true} variant="h4">
-              Reports
-            </Typography>
+            <Stack direction={"row"} spacing={2}>
+              <FormControl
+                sx={{ mt: 2, minWidth: "30em", float: "right" }}
+                size="medium"
+              >
+                <InputLabel id="demo-simple-select-label">
+                  Select Server
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  label="Select Server"
+                  onChange={handleChange}
+                >
+                  <MenuItem value={"Lilian Beam"}>Lilian Beam</MenuItem>
+                  <MenuItem value={"Humanities"}>Humanities</MenuItem>
+                  <MenuItem value={"Library"}>Library</MenuItem>
+                </Select>
+              </FormControl>
+              <Button variant="filled">Export Report</Button>
+            </Stack>
           </Box>
-          <Button variant="filled">Export Report</Button>
         </Stack>
-        <Divider sx={{ mt: 2, mb: 2 }} />
+        <Divider sx={{ mt: 2, mb: 4 }} />
       </Container>
       <Container maxWidth="xl" sx={{ mt: 3 }}>
-        <Paper elevation={3} sx={{ p: 3 }}>
-          <Stack direction="row" spacing={5}>
-            <Container
-              sx={{
-                backgroundColor: "#aeaeae",
-                borderRadius: 5,
-                p: 2,
-                textAlign: "center",
-              }}
-            >
-              <Typography variant="paragraph">REPORTS</Typography>
-              <Typography variant="h1">27</Typography>
-            </Container>
-            <Typography paragraph>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              Rhoncus dolor purus non enim praesent elementum facilisis leo vel.
-              Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
-              gravida rutrum quisque non tellus. Convallis convallis tellus id
-              interdum velit laoreet id donec ultrices. Odio morbi quis commodo
-              odio aenean sed adipiscing. Amet nisl suscipit adipiscing bibendum
-              est ultricies integer quis. Cursus euismod quis viverra nibh cras.
-              Metus vulputate eu scelerisque felis imperdiet proin fermentum
-              leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt
-              lobortis feugiat vivamus at augue. At augue eget arcu dictum
-              varius duis at consectetur lorem. Velit sed ullamcorper morbi
-              tincidunt. Lorem donec massa sapien faucibus et molestie ac.
-            </Typography>
-          </Stack>
-        </Paper>
+        <Stack direction="column" spacing={2}>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 500 }} aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>Date</StyledTableCell>
+                  <StyledTableCell align="right">Time</StyledTableCell>
+                  <StyledTableCell align="right">
+                    Temperature&nbsp;(F)
+                  </StyledTableCell>
+                  <StyledTableCell align="right">Status</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row, index) => (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell>{row.date}</StyledTableCell>
+                    <StyledTableCell align="right">{row.time}</StyledTableCell>
+                    <StyledTableCell align="right">
+                      {row.temperature}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {row.status}
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Stack>
       </Container>
     </>
   );

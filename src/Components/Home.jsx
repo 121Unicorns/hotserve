@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useMemo } from "react";
 import { useState, useEffect } from "react";
 import {
   Box,
@@ -12,7 +13,9 @@ import {
   FormControl,
   MenuItem,
   Divider,
+  Button
 } from "@mui/material";
+import { Chart } from "react-charts";
 import { getCurrentUser, signInMicrosoft, signOutMicrosoft } from "../firebase";
 
 export default function Home() {
@@ -22,6 +25,30 @@ export default function Home() {
   const handleChange = (event) => {
     setServer(event.target.value);
   };
+
+  const data = useMemo(
+    () => [
+      {
+        label: "Series 1",
+        data: [
+          [0, 1],
+          [1, 2],
+          [2, 4],
+          [3, 2],
+          [4, 7],
+        ],
+      },
+    ],
+    []
+  );
+
+  const axes = useMemo(
+    () => [
+      { primary: true, type: "linear", position: "bottom" },
+      { type: "linear", position: "left" },
+    ],
+    []
+  );
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -77,53 +104,87 @@ export default function Home() {
         </Stack>
         <Divider sx={{ mt: 2, mb: 2 }} />
       </Container>
-      <Container maxWidth="xl" sx={{ mt: 3 }}>
-        <Paper elevation={3} sx={{ p: 3 }}>
-          <Stack
-            direction={{
-              xl: "row",
-              lg: "row",
-              md: "column",
-              sm: "column",
-              xs: "column",
-            }}
-            spacing={{
-              xl: 5,
-              lg: 5,
-              md: 3,
-              sm: 3,
-              xs: 3,
-            }}
-          >
+      <Container component={Paper} sx={{ m: "auto", p: 4 }}>
+        <Stack
+          direction={{
+            xl: "row",
+            lg: "row",
+            md: "column",
+            sm: "column",
+            xs: "column",
+          }}
+          spacing={{
+            xl: 5,
+            lg: 5,
+            md: 3,
+            sm: 3,
+            xs: 3,
+          }}
+        >
+          <Stack direction={"column"} spacing={3}>
             <Container
               sx={{
                 backgroundColor: "#aeaeae",
                 borderRadius: 5,
-                p: 2,
+                p: 3,
                 textAlign: "center",
-                height: "20%",
+                height: "11em",
+                width: "14em",
               }}
             >
               <Typography variant="paragraph">CURRENT TEMPERATURE</Typography>
               <Typography variant="h1">27</Typography>
             </Container>
-            <Typography paragraph>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              Rhoncus dolor purus non enim praesent elementum facilisis leo vel.
-              Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
-              gravida rutrum quisque non tellus. Convallis convallis tellus id
-              interdum velit laoreet id donec ultrices. Odio morbi quis commodo
-              odio aenean sed adipiscing. Amet nisl suscipit adipiscing bibendum
-              est ultricies integer quis. Cursus euismod quis viverra nibh cras.
-              Metus vulputate eu scelerisque felis imperdiet proin fermentum
-              leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt
-              lobortis feugiat vivamus at augue. At augue eget arcu dictum
-              varius duis at consectetur lorem. Velit sed ullamcorper morbi
-              tincidunt. Lorem donec massa sapien faucibus et molestie ac.
-            </Typography>
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{
+                color: "#000",
+                width: "100%",
+                padding: 1,
+                borderRadius: 3,
+              }}
+              onClick={() => {
+                window.location.href = "/dashboard";
+              }}
+            >
+              Change Settings
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{
+                color: "#000",
+                width: "100%",
+                padding: 1,
+                borderRadius: 3,
+              }}
+              onClick={() => {
+                window.location.href = "/dashboard";
+              }}
+            >
+              View Past Reports
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{
+                color: "#000",
+                width: "100%",
+                padding: 1,
+                borderRadius: 3,
+              }}
+              onClick={() => {
+                window.location.href = "/dashboard";
+              }}
+            >
+              Filter by date
+            </Button>
           </Stack>
-        </Paper>
+          <div style={{ width: "50em", height: "30em" }}>
+            <Chart data={data} axes={axes} />
+          </div>
+        </Stack>
       </Container>
     </>
   );
