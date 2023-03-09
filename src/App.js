@@ -20,7 +20,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: 'Alata',
+    fontFamily: 'Alata, sans-serif',
   },
   shape: {
     borderRadius: 4,
