@@ -13,20 +13,19 @@ import {
   FormControl,
   MenuItem,
   Divider,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import { formatDate, getChartData } from "./Helpers";
 import { getCurrentUser, getCurrentTemp, getAllData } from "../firebase";
 import Chart from "./Chart";
 
-export default function Home() {
+export default function Home(props) {
+  const [data, setData] = useState(props.data);
   const [username, setUsername] = useState("");
   const [server, setServer] = useState("");
-  const [data, setData] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [temperature, setTemperature] = useState("");
   const [loading, setLoading] = useState(true);
-  const [chartDetails, setChartDetails] = useState([]);
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -37,20 +36,19 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    getData();
+    getTemp();
   }, []);
 
-  function getData() {
-    let temp = getAllData();
-    setData(temp);
+  function getTemp() {
     let temperature = getCurrentTemp();
     setTemperature(temperature);
     setLoading(false);
   }
 
   const handleChange = (event) => {
-    setServer(event.target.value);
-    const index = data && data.map((item) => item.date).indexOf(event.target.value);
+    let selected = event.target.value;
+    setServer(selected);
+    const index = data && data.map((item) => item.date).indexOf(selected);
     const myData = getChartData(data, index);
     setChartData(myData);
   };
@@ -58,7 +56,12 @@ export default function Home() {
   return (
     <>
       {loading ? (
-        <CircularProgress />
+        <Container
+      maxWidth={"xl"}
+      sx={{ display:"flex", margin: "auto", justifyContent: "center", pt: 30 }}
+    >
+      <CircularProgress />
+    </Container>
       ) : (
         <>
           <Toolbar />
@@ -154,7 +157,7 @@ export default function Home() {
                   <Typography variant="h2">{temperature}</Typography>
                 </Container>
               </Stack>
-              <Chart chartData={chartData} />
+              <Chart charta={chartData} />
             </Stack>
           </Container>
         </>

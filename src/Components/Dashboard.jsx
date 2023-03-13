@@ -20,13 +20,14 @@ import Home from "./Home";
 import Reports from "./Reports";
 import Help from "./Help";
 import Settings from "./Settings";
-import { getCurrentUser } from "../firebase";
+import { getCurrentUser, getAllData } from "../firebase";
 
 const drawerWidth = "12em";
 
 export default function Dashboard() {
   const user = getCurrentUser();
   const [selectedPage, setSelectedPage] = useState("home");
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
 
   const menuItems = [
@@ -39,6 +40,15 @@ export default function Dashboard() {
   useEffect(() => {
     user ? navigate("/dashboard") : navigate("/", { replace: true });
   }, [user, navigate]);
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  function getData() {
+    let temp = getAllData();
+    setData(temp);
+  }
 
   return (
     <>
@@ -78,7 +88,10 @@ export default function Dashboard() {
                     <ListItemButton
                       sx={{
                         color: "white",
-                        ":hover": { backgroundColor: "#ffcc01", color: "black" },
+                        ":hover": {
+                          backgroundColor: "#ffcc01",
+                          color: "black",
+                        },
                       }}
                     >
                       <ListItemIcon sx={{ color: "white" }}>
@@ -100,13 +113,13 @@ export default function Dashboard() {
               }}
             >
               {selectedPage === "reports" ? (
-                <Reports />
+                <Reports data={data} />
               ) : selectedPage === "settings" ? (
-                <Settings />
+                <Settings data={data} />
               ) : selectedPage === "help" ? (
-                <Help />
+                <Help data={data} />
               ) : (
-                <Home />
+                <Home data={data} />
               )}
             </Box>
           </Box>

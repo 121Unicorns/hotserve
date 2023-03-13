@@ -52,8 +52,9 @@ export default function Reports() {
   const [tableData, setTableData] = useState([]);
 
   const handleChange = (e) => {
-    setServer(e.target.value);
-    const index = data.map((item) => item.date).indexOf(e.target.value);
+    let temp = e.target.value;
+    setServer(temp);
+    const index = data.map((item) => item.date).indexOf(temp);
     const myData = getTableData(data, index);
     setTableData(myData);
   };
