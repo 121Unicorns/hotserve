@@ -21,7 +21,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  CircularProgress,
 } from "@mui/material";
+import { getAllData } from "../firebase";
+import { formatDate, getTableData } from "./Helpers";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -43,94 +46,151 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(date, time, temperature, status) {
-  return { date, time, temperature, status };
-}
-
-const rows = [
-  createData("09/03/2023","22:30PM", 25, "Normal"),
-  createData("09/03/2023","22:40PM", 25, "Normal"),
-  createData("09/03/2023","22:50PM", 27, "High"),
-  createData("09/03/2023","23:00PM", 32, "High"),
-  createData("09/03/2023","23:10PM", 35, "High"),
-];
-
 export default function Reports() {
   const [server, setServer] = useState(false);
+  const [data, setData] = useState([]);
+  const [tableData, setTableData] = useState([]);
+
   const handleChange = (e) => {
     setServer(e.target.value);
+    const index = data.map((item) => item.date).indexOf(e.target.value);
+    const myData = getTableData(data, index);
+    setTableData(myData);
   };
+
+  function getData() {
+    let data = getAllData();
+    setData(data);
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  function formatDate(mydate) {
+    let day = Math.floor(mydate / 1000000);
+    let month = Math.floor(mydate / 10000) - day * 100;
+    if (month < 10) {
+      month = `0${month}`;
+    }
+    let year = mydate - day * 1000000 - month * 10000;
+    let newDate = `${day}/${month}/${year}`;
+    return newDate;
+  }
+
+  function getStatus(temperature) {
+    if (temperature < 30) {
+      return "Normal";
+    } else {
+      return "High";
+    }
+  }
 
   return (
     <>
-      <Toolbar />
-      <Container maxWidth="xl">
-        <Stack
-          direction="row"
-          spacing={5}
-          sx={{ justifyContent: "space-between" }}
-        >
-          <Typography sx={{ alignSelf: "center" }} noWrap={true} variant="h4">
-            Reports
-          </Typography>
-          <Box>
-            <Stack direction={"row"} spacing={2}>
-              <FormControl
-                sx={{ mt: 2, minWidth: "30em", float: "right" }}
-                size="medium"
+      {data ? (
+        <>
+          <Toolbar />
+          <Container maxWidth="xl">
+            <Stack
+              direction="row"
+              spacing={5}
+              sx={{ justifyContent: "space-between" }}
+            >
+              <Typography
+                sx={{ alignSelf: "center" }}
+                noWrap={true}
+                variant="h4"
               >
-                <InputLabel id="demo-simple-select-label">
-                  Select Server
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Select Server"
-                  onChange={handleChange}
-                >
-                  <MenuItem value={"Lilian Beam"}>Lilian Beam</MenuItem>
-                  <MenuItem value={"Humanities"}>Humanities</MenuItem>
-                  <MenuItem value={"Library"}>Library</MenuItem>
-                </Select>
-              </FormControl>
-              <Button variant="filled">Export Report</Button>
+                Reports
+              </Typography>
+              <Box>
+                <Stack direction={"row"} spacing={2}>
+                  <FormControl
+                    sx={{
+                      mt: 2,
+                      minWidth: {
+                        xl: "30em",
+                        lg: "30em",
+                        md: "22em",
+                        sm: "15em",
+                        xs: "15em",
+                      },
+                      float: "right",
+                    }}
+                    size="medium"
+                  >
+                    <InputLabel id="demo-simple-select-label">
+                      Select Date
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Select Server"
+                      defaultValue=""
+                      onChange={handleChange}
+                    >
+                      {data &&
+                        data.map((item, index) => {
+                          return (
+                            <MenuItem key={index} value={item.date}>
+                              {formatDate(item.date)}
+                            </MenuItem>
+                          );
+                        })}
+                    </Select>
+                  </FormControl>
+                  <Button variant="filled" onClick={getData}>
+                    Export Report
+                  </Button>
+                </Stack>
+              </Box>
             </Stack>
-          </Box>
-        </Stack>
-        <Divider sx={{ mt: 2, mb: 4 }} />
-      </Container>
-      <Container maxWidth="xl" sx={{ mt: 3 }}>
-        <Stack direction="column" spacing={2}>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 500 }} aria-label="customized table">
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell>Date</StyledTableCell>
-                  <StyledTableCell align="right">Time</StyledTableCell>
-                  <StyledTableCell align="right">
-                    Temperature&nbsp;(F)
-                  </StyledTableCell>
-                  <StyledTableCell align="right">Status</StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row, index) => (
-                  <StyledTableRow key={index}>
-                    <StyledTableCell>{row.date}</StyledTableCell>
-                    <StyledTableCell align="right">{row.time}</StyledTableCell>
-                    <StyledTableCell align="right">
-                      {row.temperature}
-                    </StyledTableCell>
-                    <StyledTableCell align="right">
-                      {row.status}
-                    </StyledTableCell>
-                  </StyledTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Stack>
-      </Container>
+            <Divider sx={{ mt: 2, mb: 4 }} />
+          </Container>
+          <Container maxWidth="xl" sx={{ mt: 3 }}>
+            <Stack direction="column" spacing={2}>
+              {tableData && (
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 500 }} aria-label="customized table">
+                    <TableHead>
+                      <TableRow>
+                        <StyledTableCell>Date</StyledTableCell>
+                        <StyledTableCell align="right">Time</StyledTableCell>
+                        <StyledTableCell align="right">
+                          Temperature&nbsp;(F)
+                        </StyledTableCell>
+                        <StyledTableCell align="right">Status</StyledTableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {tableData &&
+                        tableData.map((item) => (
+                          <StyledTableRow>
+                            <StyledTableCell>
+                              {formatDate(server)}
+                            </StyledTableCell>
+                            <StyledTableCell align="right">
+                              {item.time}
+                            </StyledTableCell>
+                            <StyledTableCell align="right">
+                              {item.temp}
+                            </StyledTableCell>
+                            <StyledTableCell align="right">
+                              {getStatus(item.temp)}
+                            </StyledTableCell>
+                          </StyledTableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </Stack>
+          </Container>
+        </>
+      ) : (
+        <CircularProgress />
+      )}
     </>
   );
 }

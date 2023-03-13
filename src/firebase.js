@@ -1,8 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, signOut, OAuthProvider } from "firebase/auth";
-import { getDatabase } from "firebase/database";
-import { getFirestore } from "firebase/firestore";
+import { getDatabase, ref, onValue } from "firebase/database";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -18,8 +17,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const database = getDatabase(app);
-const db = getFirestore(app);
+const db = getDatabase(app);
 
 const provider = new OAuthProvider('microsoft.com');
 provider.setCustomParameters({
@@ -52,5 +50,43 @@ function getCurrentUser() {
     return auth.currentUser;
 }
 
+function getAllData() {
+    const starCountRef = ref(db, 'Status/PiTest');
+    let data;
+    const myData = [];
+    onValue(starCountRef, (snapshot) => {
+        data = snapshot.val();
+        const values = Object.values(data);
+        const keys = Object.keys(data);
+        const entries = Object.entries(data);
+        
+        for (let i = 0; i < entries.length; i++) {
+            let temp = {
+                date: keys[i],
+                temp: values[i],
+            };
+            myData.push(temp);
+        }
+    });
+    return myData;
+}
+
+function getTempOnDate(date) {
+    const starCountRef = ref(db, `Status/PiTest/${date}`);
+    onValue(starCountRef, (snapshot) => {
+        const temp = snapshot.val();
+        return temp;
+    });
+}
+
+function getCurrentTemp() {
+    const starCountRef = ref(db, `Temp`);
+    let data;
+    onValue(starCountRef, (snapshot) => {
+        data = snapshot.val();
+    });
+    return data;
+}
+
 //define literally every firebase function here, then type export then include every firebase function you need to export
-export { signInMicrosoft, signOutMicrosoft, getCurrentUser, provider, auth, database, db };
+export { signInMicrosoft, signOutMicrosoft, getCurrentUser, getAllData, getTempOnDate, getCurrentTemp, provider, auth, db };
