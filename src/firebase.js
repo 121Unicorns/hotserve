@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, signOut, OAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, signOut, OAuthProvider, GoogleAuthProvider } from "firebase/auth";
 import { getDatabase, ref, onValue } from "firebase/database";
 
 // Your web app's Firebase configuration
@@ -18,6 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
+const gProvider = new GoogleAuthProvider();
 
 const provider = new OAuthProvider('microsoft.com');
 provider.setCustomParameters({
@@ -36,7 +37,6 @@ function signInMicrosoft() {
             console.log(error);
         });
 }
-
 
 function signOutMicrosoft() {
     signOut(auth).then(() => {
