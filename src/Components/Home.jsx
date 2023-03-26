@@ -20,7 +20,7 @@ import { getCurrentUser, getCurrentTemp, getAllData } from "../firebase";
 import Chart from "./Chart";
 
 export default function Home(props) {
-  const [data, setData] = useState(props.data);
+  const [data, setData] = useState([]);
   const [username, setUsername] = useState("");
   const [server, setServer] = useState("");
   const [chartData, setChartData] = useState([]);
@@ -36,13 +36,19 @@ export default function Home(props) {
   }, []);
 
   useEffect(() => {
+    getData();
     getTemp();
-  }, []);
+  }, [data]);
+
+  function getData() {
+    let temp = getAllData();
+    setData(temp);
+  }
 
   function getTemp() {
     let temperature = getCurrentTemp();
     setTemperature(temperature);
-    setLoading(false);
+    (data.length>0) && setLoading(false);
   }
 
   const handleChange = (event) => {
@@ -103,12 +109,12 @@ export default function Home(props) {
                 size="medium"
               >
                 <InputLabel id="demo-simple-select-label">
-                  Select Server
+                  Select Date
                 </InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  label="Select Server"
+                  label="Select Date"
                   defaultValue=""
                   onChange={handleChange}
                 >

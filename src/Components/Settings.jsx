@@ -37,17 +37,6 @@ export default function Settings() {
       <Container maxWidth="xl" sx={{ mt: 3 }}>
         <Paper elevation={3} sx={{ p: 3 }}>
           <Stack direction="row" spacing={5}>
-            <Container
-              sx={{
-                backgroundColor: "#aeaeae",
-                borderRadius: 5,
-                p: 2,
-                textAlign: "center",
-              }}
-            >
-              <Typography variant="paragraph">SETTINGS</Typography>
-              <Typography variant="h1">27</Typography>
-            </Container>
             <Typography paragraph>
               I'll add the settings here later once we sort out the cloud functions.
             </Typography>
