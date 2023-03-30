@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, signOut, OAuthProvider, GoogleAuthProvider } from "firebase/auth";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, update } from "firebase/database";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -86,6 +86,24 @@ function getCurrentTemp() {
         data = snapshot.val();
     });
     return data;
+}
+
+function getThreshold() {
+    const starCountRef = ref(db, `Settings/Threshold`);
+    return new Promise((resolve, reject) => {
+        onValue(starCountRef, (snapshot) => {
+            const data = snapshot.val();
+            console.log("trs", data);
+            resolve(data);
+        }, (error) => {
+            reject(error);
+        });
+    });
+}
+function setThreshold(thold) {
+    update(ref(db, `Settings`), {
+        'Threshold': thold
+    });
 }
 
 //define literally every firebase function here, then type export then include every firebase function you need to export
