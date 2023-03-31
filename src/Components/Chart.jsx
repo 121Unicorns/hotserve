@@ -14,7 +14,6 @@ import { height } from "@mui/system";
 
 export default function Chart(props) {
   const chartData = props.charta;
-  console.log(chartData);
 
   const data = [
     {

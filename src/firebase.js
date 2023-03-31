@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, signOut, OAuthProvider, GoogleAuthProvider } from "firebase/auth";
-import { getDatabase, ref, onValue, update } from "firebase/database";
+import { getDatabase, ref, onValue, update, set } from "firebase/database";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -51,15 +51,15 @@ function getCurrentUser() {
 }
 
 function getAllData() {
-    const starCountRef = ref(db, 'Status/PiTest');
+    const dataRef = ref(db, 'Status/PiTest');
     let data;
     const myData = [];
-    onValue(starCountRef, (snapshot) => {
+    onValue(dataRef, (snapshot) => {
         data = snapshot.val();
         const values = Object.values(data);
         const keys = Object.keys(data);
         const entries = Object.entries(data);
-        
+
         for (let i = 0; i < entries.length; i++) {
             let temp = {
                 date: keys[i],
@@ -79,6 +79,19 @@ function getTempOnDate(date) {
     });
 }
 
+function getUserSettings(user) {
+    const userRef = ref(db, `Status/settings/${user}`);
+    onValue(userRef, (snapshot) => {
+        const temp = snapshot.val();
+        return temp;
+    });
+}
+
+function writeUserSettings(user) {
+    const userRef = ref(db, `Settings/${user.uid}`);
+    set(userRef, user);
+}
+
 function getCurrentTemp() {
     const starCountRef = ref(db, `Temp`);
     let data;
@@ -93,7 +106,7 @@ function getThreshold() {
     return new Promise((resolve, reject) => {
         onValue(starCountRef, (snapshot) => {
             const data = snapshot.val();
-            console.log("trs", data);
+            // console.log("trs", data);
             resolve(data);
         }, (error) => {
             reject(error);
@@ -107,4 +120,18 @@ function setThreshold(thold) {
 }
 
 //define literally every firebase function here, then type export then include every firebase function you need to export
-export { signInMicrosoft, signOutMicrosoft, getCurrentUser, getAllData, getTempOnDate, getCurrentTemp, provider, auth, db };
+export {
+    signInMicrosoft,
+    signOutMicrosoft,
+    getCurrentUser,
+    getAllData,
+    getTempOnDate,
+    getCurrentTemp,
+    provider,
+    auth,
+    db,
+    getThreshold,
+    setThreshold,
+    getUserSettings,
+    writeUserSettings
+};
